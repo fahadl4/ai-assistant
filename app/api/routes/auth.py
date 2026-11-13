@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.permissions import require_permission
 from app.core.security import get_current_user
 from app.db.database import get_db
 from app.models.user import User
@@ -28,3 +29,12 @@ async def get_me(
     current_user: User = Depends(get_current_user)
 ):
     return current_user
+
+@router.get("/test-permission")
+async def test_permission(
+    current_user: User = Depends(require_permission("manage_permissions"))
+):
+    return {
+        "message": "permission checked",
+        "user": current_user.user_id
+    }

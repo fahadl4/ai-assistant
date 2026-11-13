@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class UserBase(BaseModel):
     user_name: str
@@ -6,6 +6,7 @@ class UserBase(BaseModel):
 
 class UserRegistration(UserBase):
     password: str
+    role_id: int = Field(gt=0)
 
 class UserLogin(BaseModel):
     user_email: str
