@@ -3,6 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user_permission import UserPermission
 
+from datetime import datetime, timezone
+
 
 #--------------------All User Permissions------------------
 async def get_user_permissions(db: AsyncSession, user_id: int) -> list[UserPermission]:
@@ -60,3 +62,23 @@ async def create_user_permission(db: AsyncSession, user_id: int, permission_id: 
         await db.flush()
         
         return create_permission
+    
+async def update_user_permission(db: AsyncSession, user_id: int, permission_id: int, is_enabled: bool) -> UserPermission | None:
+    user_permission = await get_user_permission(db, user_id, permission_id)
+    
+    if user_permission is None:
+        return None
+    
+    user_permission.is_enabled = is_enabled
+    
+    return user_permission
+
+async def delete_user_permission(db: AsyncSession, user_id: int, permission_id: int) -> UserPermission | None:
+    user_permission = await get_user_permission(db, user_id, permission_id)
+    
+    if user_permission is None:
+        return None
+    
+    user_permission.deleted_at = datetime.now(timezone.utc)
+    
+    return user_permission
